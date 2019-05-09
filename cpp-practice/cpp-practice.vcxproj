@@ -151,7 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cpp-practice.cpp" />
+    <ClCompile Include="src\codechallenges\leetcodeHub.cpp" />
+    <ClCompile Include="src\codechallenges\leetcode\problem-set-001.cpp" />
+    <ClCompile Include="src\cpp-practice.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\codechallenges\leetcode\problem-set-001.h" />
+    <ClInclude Include="src\common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
