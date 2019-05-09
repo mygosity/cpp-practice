@@ -17,6 +17,5 @@ namespace codechallenges
 			static void Add_Two_Numbers_Linked_List();
 			static void Longest_Substring();
 		};
-		
 	}
 }
