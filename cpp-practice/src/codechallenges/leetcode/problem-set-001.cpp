@@ -8,6 +8,39 @@ namespace codechallenges
 		using ListNode = ProblemSet001::ListNode;
 
 		/**********************************************************************
+			Problem 9: Easy - Palindrome Integer
+			Determine whether an integer is a palindrome.
+			An integer is a palindrome when it reads the same backward as forward.
+		***********************************************************************/
+		bool isPalindrome(int x) {
+			if (x < 0)
+				return false;
+			vector<int> vec;
+			int t = x;
+			while (t > 0) {
+				vec.push_back(t % 10);
+				t /= 10;
+			}
+			for (int i = 0; i < vec.size(); ++i) {
+				int j = vec.size() - 1 - i;
+				if (i == j) {
+					return true;
+				}
+				if (vec[i] != vec[j]) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		void Is_Number_Palindrome()
+		{
+			LOG("isPalindrome(121): " << isPalindrome(121));
+			LOG("isPalindrome(-121): " << isPalindrome(-121));
+			LOG("isPalindrome(1210): " << isPalindrome(1210));
+		}
+
+		/**********************************************************************
 			Problem 3: Easy - Reverse Integer
 			Given a 32 - bit signed integer, reverse digits of an integer.
 			Use modulus to get digits and print them back with exponents
@@ -232,6 +265,7 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
+			//Is_Number_Palindrome();
 			//Reverse_Integer();
 			//Longest_Substring();
 			//Add_Two_Numbers_Linked_List();
