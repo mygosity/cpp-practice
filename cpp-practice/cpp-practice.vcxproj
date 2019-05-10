@@ -152,10 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\codechallenges\leetcodeHub.cpp" />
+    <ClCompile Include="src\codechallenges\leetcode\hard\Problem4MedianSortedArray.cpp" />
     <ClCompile Include="src\codechallenges\leetcode\problem-set-001.cpp" />
     <ClCompile Include="src\cpp-practice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\codechallenges\leetcode\hard\Problem4MedianSortedArray.h" />
     <ClInclude Include="src\codechallenges\leetcode\problem-set-001.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\utils\general.h" />

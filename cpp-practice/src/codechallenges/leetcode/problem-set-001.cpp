@@ -8,6 +8,41 @@ namespace codechallenges
 		using ListNode = ProblemSet001::ListNode;
 
 		/**********************************************************************
+			Problem 3: Easy - Reverse Integer
+			Given a 32 - bit signed integer, reverse digits of an integer.
+			Use modulus to get digits and print them back with exponents
+		***********************************************************************/
+		int reverse(int x) {
+			//integer overflow
+			if (x <= INT_MIN || x >= INT_MAX)
+				return 0;
+			if (x < 0) {
+				return (-1 * reverse(x * -1));
+			}
+			int t = x;
+			int answer = 0;
+			vector<int> list;
+			while (t > 0) {
+				list.push_back(t % 10);
+				t /= 10;
+			}
+			int exp = list.size() - 1;
+			for (int& i : list) {
+				answer += i * pow(10, exp--);
+			}
+			//integer overflow
+			if (answer < 0) {
+				return 0;
+			}
+			return answer;
+		}
+
+		void Reverse_Integer()
+		{
+			LOG("Reverse_Integer:: 1321312 = " << reverse(1321312));
+		}
+
+		/**********************************************************************
 			Problem 3: Medium - Longest Substring Without Repeating Characters
 			using maps / maths to solve repeating character problem
 			called sliding windows when moving indexes around
@@ -115,7 +150,7 @@ namespace codechallenges
 			return max > count ? max : count;
 		}
 
-		void ProblemSet001::Longest_Substring()
+		void Longest_Substring()
 		{
 			std::string t1 = "abcdvefged";
 			std::string t2 = "dvdfa";
@@ -154,8 +189,9 @@ namespace codechallenges
 			return head;
 		}
 
-		void ProblemSet001::Add_Two_Numbers_Linked_List()
+		void Add_Two_Numbers_Linked_List()
 		{
+			LOG("Add_Two_Numbers_Linked_List");
 			ListNode* node1 = new ListNode(7);
 			node1->next = new ListNode(0);
 			node1->next = new ListNode(3);
@@ -185,13 +221,21 @@ namespace codechallenges
 			return { 0, 0 };
 		}
 
-		void ProblemSet001::Two_Sum()
+		void Two_Sum()
 		{
 			std::vector<int> vec = { 2, 7, 323, 23 };
 			vec = twoSum(vec, 9);
 			for (int& i : vec) {
 				LOG(i);
 			}
+		}
+
+		void ProblemSet001::Start() 
+		{
+			//Reverse_Integer();
+			//Longest_Substring();
+			//Add_Two_Numbers_Linked_List();
+			//Two_Sum();
 		}
 	}
 }
