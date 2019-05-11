@@ -11,7 +11,7 @@ int main()
 	string c = "asdfsdafs";
 	c.push_back('d');
 	//c.clear();
-	std::cout<<(c.substr(0, 2))<<std::endl;
+	//std::cout<<(c.substr(0, 2))<<std::endl;
 
 	codechallenges::leetcode::Start();
 }
