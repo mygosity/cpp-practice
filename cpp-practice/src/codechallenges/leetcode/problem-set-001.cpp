@@ -109,6 +109,143 @@ namespace codechallenges
 		}
 
 		/**********************************************************************
+			Problem 6: Medium - Convert to zig zag
+			The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+			P   A   H   N
+			A P L S I I G
+			Y   I   R
+			And then read line by line: "PAHNAPLSIIGYIR"
+
+			Write the code that will take a string and make this conversion given a number of rows:
+
+			string convert(string s, int numRows);
+			Example 1:
+
+			Input: s = "PAYPALISHIRING", numRows = 3
+			Output: "PAHNAPLSIIGYIR"
+		***********************************************************************/
+
+		//this actually calculates at the same rate as my own after testing it.. but it is shorter!
+		string publicSolutionZigZag(string s, int nRows) {
+			if (nRows <= 1)
+				return s;
+			string res = "";
+			int size = 2 * nRows - 2;
+			for (int i = 0; i < nRows; ++i) {
+				for (int j = i; j < s.size(); j += size) {
+					res += s[j];
+					int tmp = j + size - 2 * i;
+					if (i != 0 && i != nRows - 1 && tmp < s.size())
+						res += s[tmp];
+				}
+			}
+			return res;
+		}
+
+		//upon retrospection I could've shortened it like the public solution above. dang it!
+		string fasterConvertZigZag(string s, int numRows) {
+			int len = s.size();
+			if (len == 1 || numRows == 1 || len < numRows) {
+				return s;
+			}
+			string a;
+			int added = 0;
+			int ptr = 0;
+			int row = 0;
+			bool add = false;
+			// std::cout << "len: " << len << std::endl;
+			while (added < len) {
+				// std::cout << "s[ptr]: " << s[ptr] << " ptr: " << ptr << " added: " << added << " row: " << row << std::endl;
+				a.push_back(s[ptr]);
+				add = !add;
+				ptr += (numRows - 1) + numRows - 1;
+				if (add && row != 0 && row != numRows - 1) {
+					int additional = ptr - row * 2;
+					if (additional > 0 && additional < len) {
+						// std::cout << "additional : " << s[additional] << std::endl;
+						a.push_back(s[additional]);
+						added++;
+						add = false;
+					}
+				}
+				if (ptr >= len) {
+					row++;
+					ptr = row;
+					add = false;
+				}
+				added++;
+			}
+			return a;
+		}
+
+		//slow brute force method
+		string convertZigZag(string s, const int numRows) {
+			int len = s.size();
+			if (len == 1 || numRows == 1 || len < numRows) {
+				return s;
+			}
+			int count = 0;
+			int** matrix = new int* [numRows];
+			for (int i = 0; i < numRows; i++)
+			{
+				matrix[i] = new int[len];
+				for (int j = 0; j < len; ++j) {
+					matrix[i][j] = 0;
+					count++;
+				}
+			}
+			//LOG("matrix count: " << count);
+
+			int x = 0, y = 0;
+			bool forwards = true;
+			for (int i = 0; i < len; ++i) {
+				matrix[y][x] = i + 1;
+				y = forwards ? ++y : --y;
+				if (forwards) {
+					if (y >= numRows) {
+						forwards = false;
+						y = numRows - 2;
+						x++;
+					}
+				}
+				else
+				{
+					if (y < 0) {
+						forwards = true;
+						y = 0;
+					}
+					else
+					{
+						x++;
+					}
+				}
+			}
+			string a;
+			for (int row = 0; row < numRows; ++row) {
+				for (int column = 0; column < len; ++column) {
+					int i = matrix[row][column];
+					if (i != 0) {
+						//std::cout << "index: " << (i - 1) << std::endl;
+						a.push_back(s[i - 1]);
+					}
+				}
+			}
+			for (int i = 0; i < numRows; i++)
+				delete[] matrix[i];
+			delete[] matrix;
+			return a;
+		}
+
+		void ConvertToZigZag()
+		{
+			LOG(convertZigZag("PAYPALISHIRING", 3));
+			LOG(convertZigZag("PAYPALISHIRING", 4));
+			LOG("");
+			LOG("fasterConvertZigZag: answer and expected: \n" << fasterConvertZigZag("PAYPALISHIRING", 3) << " \n" << "PAHNAPLSIIGYIR");
+			LOG("fasterConvertZigZag: answer and expected: \n" << fasterConvertZigZag("PAYPALISHIRING", 4) << " \n" << "PINALSIGYAHRPI");
+		}
+
+		/**********************************************************************
 			Problem 5: Medium - Longest Palindromic Substring
 			Given a string s, find the longest palindromic substring in s.
 			You may assume that the maximum length of s is 1000.
@@ -537,6 +674,7 @@ namespace codechallenges
 		void ProblemSet001::Start() 
 		{
 			//RomanNumeralsConversion();
+			ConvertToZigZag();
 			//LongestPalindromicSubstring();
 			//Is_Number_Palindrome();
 			//Reverse_Integer();
