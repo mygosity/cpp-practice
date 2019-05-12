@@ -8,6 +8,74 @@ namespace codechallenges
 		using ListNode = ProblemSet001::ListNode;
 
 		/**********************************************************************
+			Problem 13: Easy - Roman Numerals to Integer
+			Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.
+			Symbol       Value
+			I             1
+			V             5
+			X             10
+			L             50
+			C             100
+			D             500
+			M             1000
+			For example, two is written as II in Roman numeral, just two one's added together. 
+			Twelve is written as, XII, which is simply X + II. 
+			The number twenty seven is written as XXVII, which is XX + V + II.
+
+			Roman numerals are usually written largest to smallest from left to right. 
+			However, the numeral for four is not IIII. Instead, the number four is written as IV. 
+			Because the one is before the five we subtract it making four. 
+			The same principle applies to the number nine, which is written as IX. 
+			There are six instances where subtraction is used:
+
+			I can be placed before V (5) and X (10) to make 4 and 9.
+			X can be placed before L (50) and C (100) to make 40 and 90.
+			C can be placed before D (500) and M (1000) to make 400 and 900.
+			Given a roman numeral, convert it to an integer. 
+			Input is guaranteed to be within the range from 1 to 3999.
+		***********************************************************************/
+		static map<char, int> roman_table = {
+			{'M', 1000},
+			{'D', 500},
+			{'C', 100},
+			{'L', 50},
+			{'X', 10},
+			{'V', 5},
+			{'I', 1}
+		};
+		static map<char, char> roman_jumpset = {
+			{'M', 'C'},
+			{'D', 'C'},
+			{'C', 'X'},
+			{'L', 'X'},
+			{'X', 'I'},
+			{'V', 'I'}
+		};
+		int romanToInt(string s) {
+			int a = 0;
+			int end = s.size();
+			for (int i = 0; i < s.size(); ++i) {
+				char c = s[i];
+				char n = i + 1 < end ? s[i + 1] : ' ';
+				if (n != ' ' && c == roman_jumpset[n]) {
+					a += roman_table[n] - roman_table[roman_jumpset[n]];
+					++i;
+				}
+				else
+				{
+					a += roman_table[c];
+				}
+			}
+			return a;
+		}
+
+		void RomanNumeralsConversion() 
+		{
+			LOG(romanToInt("IV"));
+			LOG(romanToInt("MMMXCVIII"));
+		}
+
+		/**********************************************************************
 			Problem 9: Easy - Palindrome Integer
 			Determine whether an integer is a palindrome.
 			An integer is a palindrome when it reads the same backward as forward.
@@ -468,11 +536,8 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
-			LongestPalindromicSubstring();
-			/*string s = "babad";
-			int middle = (s.size() - 0.5) / 2;
-			string a(s, middle, 1);
-			LOG(a);*/
+			//RomanNumeralsConversion();
+			//LongestPalindromicSubstring();
 			//Is_Number_Palindrome();
 			//Reverse_Integer();
 			//Longest_Substring();
