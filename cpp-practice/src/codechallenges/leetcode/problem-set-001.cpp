@@ -109,6 +109,156 @@ namespace codechallenges
 		}
 
 		/**********************************************************************
+			Problem 7: Medium - String to Integer (atoi)
+			Implement atoi which converts a string to an integer.
+
+			The function first discards as many whitespace characters as necessary until 
+			the first non-whitespace character is found. Then, starting from this character, 
+			takes an optional initial plus or minus sign followed by as many numerical digits 
+			as possible, and interprets them as a numerical value.
+
+			The string can contain additional characters after those that form the integral 
+			number, which are ignored and have no effect on the behavior of this function.
+
+			If the first sequence of non-whitespace characters in str is not a valid integral 
+			number, or if no such sequence exists because either str is empty or it 
+			contains only whitespace characters, no conversion is performed.
+
+			If no valid conversion could be performed, a zero value is returned.
+
+		***********************************************************************/
+
+		//gross brute force method but this question was quite annoying to answer ...
+		int myAtoi(string str) {
+			int a = 0;
+			int positive = 1;
+			int zeroCharCode = (int)'0';
+			int nineCharCode = (int)'9';
+			const int maxIntLen = 10;
+			int arr[maxIntLen] = { 0 };
+			int index = 0;
+			int len = str.size();
+			int foundNumber = 0;
+
+			int whiteSpaceIndex = -1;
+			int plusSigns = 0;
+			int negativeSigns = 0;
+			int nonWhiteSpaceChr = 0;
+			int zeroes = 0;
+			for (int i = 0; i < len; ++i) {
+				char s = str[i];
+				int c = s - zeroCharCode;
+				if (foundNumber == 0) {
+					if (c > 0 && c <= 9) {
+						foundNumber = 1;
+						arr[index++] = c;
+					}
+					else {
+						switch (s) {
+						case '-': {
+							positive = -1;
+							if (negativeSigns > 0 || plusSigns > 0 || zeroes > 0) {
+								return 0;
+							}
+							negativeSigns++;
+							break;
+						}
+						case ' ': {
+							//successive white space indexes indicate invalid input
+							if (whiteSpaceIndex > -1 && whiteSpaceIndex != i - 1 || zeroes > 0) {
+								// std::cout <<"whiteSpaceIndex: " << whiteSpaceIndex << std::endl;
+								return 0;
+							}
+							if (negativeSigns > 0) {
+								return 0;
+							}
+							whiteSpaceIndex = i;
+							break;
+						}
+						case '+': {
+							if (positive == -1 || plusSigns > 0) {
+								return 0;
+							}
+							plusSigns++;
+							break;
+						}
+						case '0': {
+							zeroes++;
+							break;
+						}
+						default: {
+							return 0;
+						}
+						}
+					}
+				}
+				else {
+					if (c >= 0 && c <= 9) {
+						if (index >= maxIntLen) {
+							return positive == 1 ? INT_MAX : INT_MIN;
+						}
+						arr[index++] = c;
+					}
+					else {
+						break;
+					}
+				}
+			}
+			index--;
+			if (index < 0) {
+				return 0;
+			}
+			bool checkLimits = index >= maxIntLen - 1;
+			// std::cout << "checkLimits: " << checkLimits << " index: " << index << " positive: " << positive << std::endl;
+			if (checkLimits) {
+				if (arr[0] > 2) {
+					return positive == 1 ? INT_MAX : INT_MIN;
+				}
+			}
+			for (int i = 0; i < maxIntLen; ++i) {
+				a += arr[i] * pow(10, index);
+				index--;
+				if (index < 0) {
+					if (checkLimits) {
+						if (positive == 1) {
+							// std::cout << "positive: " << positive << " a: " << a << std::endl;
+							if (a < 0) {
+								return INT_MAX;
+							}
+						}
+						else {
+							long test = (long)a + 1;
+							if (test - 1 <= INT_MIN) {
+								return INT_MIN;
+							}
+						}
+					}
+					return a * positive;
+				}
+			}
+			return a * positive;
+		}
+
+		void MyStringToIntegerParser() 
+		{
+			LOG("myAtoi(42): " << myAtoi("42"));
+			LOG("myAtoi(-2147483648): " << myAtoi("-2147483648"));
+			LOG("myAtoi(2147483648): " << myAtoi("2147483648"));
+
+			//std::cout << "(int)char : (int)-: " << (int)'-' << std::endl;
+			//std::cout << "(int)char : (int)0: " << (int)'0' << std::endl;
+			//std::cout << "(int)char : (int)1: " << (int)'1' << std::endl;
+			//std::cout << "(int)char : (int)2: " << (int)'2' << std::endl;
+			//std::cout << "(int)char : (int)3: " << (int)'3' << std::endl;
+			//std::cout << "(int)char : (int)4: " << (int)'4' << std::endl;
+			//std::cout << "(int)char : (int)5: " << (int)'5' << std::endl;
+			//std::cout << "(int)char : (int)6: " << (int)'6' << std::endl;
+			//std::cout << "(int)char : (int)7: " << (int)'7' << std::endl;
+			//std::cout << "(int)char : (int)8: " << (int)'8' << std::endl;
+			//std::cout << "(int)char : (int)9: " << (int)'9' << std::endl;
+		}
+
+		/**********************************************************************
 			Problem 6: Medium - Convert to zig zag
 			The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
 			P   A   H   N
@@ -673,8 +823,9 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
+			MyStringToIntegerParser();
 			//RomanNumeralsConversion();
-			ConvertToZigZag();
+			//ConvertToZigZag();
 			//LongestPalindromicSubstring();
 			//Is_Number_Palindrome();
 			//Reverse_Integer();
