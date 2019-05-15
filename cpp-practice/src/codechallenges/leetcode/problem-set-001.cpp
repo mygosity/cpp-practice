@@ -109,7 +109,7 @@ namespace codechallenges
 		}
 
 		/**********************************************************************
-			Problem 7: Medium - String to Integer (atoi)
+			Problem 8: Medium - String to Integer (atoi)
 			Implement atoi which converts a string to an integer.
 
 			The function first discards as many whitespace characters as necessary until 
@@ -256,6 +256,41 @@ namespace codechallenges
 			//std::cout << "(int)char : (int)7: " << (int)'7' << std::endl;
 			//std::cout << "(int)char : (int)8: " << (int)'8' << std::endl;
 			//std::cout << "(int)char : (int)9: " << (int)'9' << std::endl;
+		}
+
+		/**********************************************************************
+			Problem 7: Easy - Reverse Integer
+			Given a 32 - bit signed integer, reverse digits of an integer.
+			Use modulus to get digits and print them back with exponents
+		***********************************************************************/
+		int reverse(int x) {
+			//integer overflow
+			if (x <= INT_MIN || x >= INT_MAX)
+				return 0;
+			if (x < 0) {
+				return (-1 * reverse(x * -1));
+			}
+			int t = x;
+			int answer = 0;
+			vector<int> list;
+			while (t > 0) {
+				list.push_back(t % 10);
+				t /= 10;
+			}
+			int exp = list.size() - 1;
+			for (int& i : list) {
+				answer += i * pow(10, exp--);
+			}
+			//integer overflow
+			if (answer < 0) {
+				return 0;
+			}
+			return answer;
+		}
+
+		void Reverse_Integer()
+		{
+			LOG("Reverse_Integer:: 1321312 = " << reverse(1321312));
 		}
 
 		/**********************************************************************
@@ -596,41 +631,6 @@ namespace codechallenges
 			std::cout << longestPalindrome(s9) << std::endl;
 			std::cout << longestPalindrome(s10) << std::endl;
 			std::cout << longestPalindrome(s11) << std::endl;
-		}
-
-		/**********************************************************************
-			Problem 3: Easy - Reverse Integer
-			Given a 32 - bit signed integer, reverse digits of an integer.
-			Use modulus to get digits and print them back with exponents
-		***********************************************************************/
-		int reverse(int x) {
-			//integer overflow
-			if (x <= INT_MIN || x >= INT_MAX)
-				return 0;
-			if (x < 0) {
-				return (-1 * reverse(x * -1));
-			}
-			int t = x;
-			int answer = 0;
-			vector<int> list;
-			while (t > 0) {
-				list.push_back(t % 10);
-				t /= 10;
-			}
-			int exp = list.size() - 1;
-			for (int& i : list) {
-				answer += i * pow(10, exp--);
-			}
-			//integer overflow
-			if (answer < 0) {
-				return 0;
-			}
-			return answer;
-		}
-
-		void Reverse_Integer()
-		{
-			LOG("Reverse_Integer:: 1321312 = " << reverse(1321312));
 		}
 
 		/**********************************************************************
