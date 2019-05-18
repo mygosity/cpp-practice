@@ -604,11 +604,8 @@ namespace codechallenges
 		//FINALLY SOLVED IT AND THIS SOLUTION IS SO MUCH CLEANER TEH JOY***
 		bool isMatch(string s, string p) {
 			debuglog << "	bestIsMatch:: (" << s << ", " << p << ")\n";
-			if (s.size() == 0 && p.size() == 0) {
-				return true;
-			}
-			if (s.size() > 0 && p.size() == 0) {
-				return false;
+			if (p.empty()) {
+				return s.empty();
 			}
 			int s_ptr = 0;
 			for (int i = 0; i < p.size(); ++i) {
@@ -655,6 +652,129 @@ namespace codechallenges
 			debuglog << " s_ptr: " << s_ptr << "\n";
 			return s_ptr >= s.size();
 		}
+
+		bool publicSolution4msisMatch(string s, string p) {
+			stack<pair<int, int> > positions;
+			vector<vector<bool> > seen(s.size() + 5, vector<bool>(p.size() + 5, false));
+
+			positions.push(make_pair(0, 0));
+
+			while (!positions.empty()) {
+				pair<int, int> indexes = positions.top();
+				positions.pop();
+
+				if (seen.at(indexes.first).at(indexes.second)) {
+					continue;
+				}
+
+				seen.at(indexes.first).at(indexes.second) = true;
+
+				bool isNextAStar = indexes.second + 1 < p.size() && p.at(indexes.second + 1) == '*';
+
+				if (isNextAStar) {
+					positions.push(make_pair(indexes.first, indexes.second + 2));
+				}
+
+				if (indexes.first >= s.size() || indexes.second >= p.size()) {
+					if (indexes.first >= s.size() && indexes.second >= p.size()) {
+						return true;
+					}
+					continue;
+				}
+
+				// if there is not a match
+				if (p.at(indexes.second) != '.' && s.at(indexes.first) != p.at(indexes.second)) {
+					continue;
+				}
+
+				// there was a match, move one
+				indexes.first++;
+
+				if (isNextAStar) {
+					positions.push(indexes);
+					positions.push(make_pair(indexes.first, indexes.second + 2));
+				}
+				else {
+					positions.push(make_pair(indexes.first, indexes.second + 1));
+				}
+			}
+			return false;
+		}
+
+		//bool publicSolution4msisMatch(string s, string p) {
+		//	if (s.empty() && p.empty()) return true;
+
+		//	const int len_s = s.size();
+		//	const int len_p = p.size();
+		//	bool dp[len_s + 1][len_p + 1];
+
+		//	char last;
+		//	for (int i = 0; i <= len_s; i++) {
+		//		last = 0;
+		//		dp[i][0] = (i == 0);
+		//		for (int j = 1; j <= len_p; j++) {
+		//			dp[i][j] = false;
+		//			// match xy => xy or x.
+		//			if (i >= 1 && dp[i - 1][j - 1] && (p[j - 1] == '.' || s[i - 1] == p[j - 1])) {
+		//				dp[i][j] = true;
+		//			}
+		//			if (p[j - 1] != '*') {
+		//				last = p[j - 1];
+		//			}
+		//			else {
+		//				// match x => x*
+		//				if (dp[i][j - 1]) dp[i][j] = true;
+		//				// match xx => x*
+		//				// match xxx => x*, xxxx => x*
+		//				else if (i >= 1
+		//					&& (dp[i - 1][j - 1] || dp[i - 1][j])
+		//					&& (last == '.' || last == s[i - 1]))
+		//					dp[i][j] = true;
+		//				// match '' => x*
+		//				else if (j >= 2 && dp[i][j - 2]) dp[i][j] = true;
+		//			}
+		//			//          cout << i << "," << j << "==>" << dp[i][j] << endl;
+		//		}
+		//	}
+
+		//	return dp[len_s][len_p];
+		//}
+
+		/*bool publicSolution0msisMatch(string s, string p) {
+			unsigned int m = s.size();
+			unsigned int n = p.size();
+
+			bool b[m + 1][n + 1];
+			b[0][0] = true;
+
+			for (int i = 1; i <= m; ++i) {
+				b[i][0] = false;
+			}
+
+			for (int j = 1; j <= n; ++j) {
+				if (j > 1 && p[j - 1] == '*' && b[0][j - 2]) {
+					b[0][j] = true;
+				}
+				else {
+					b[0][j] = false;
+				}
+			}
+
+			for (int i = 1; i <= m; ++i) {
+				for (int j = 1; j <= n; ++j) {
+					if (p[j - 1] != '*') {
+						b[i][j] = b[i - 1][j - 1] && (p[j - 1] == '.' || s[i - 1] == p[j - 1]);
+					}
+					else {
+						b[i][j] = (j > 1 && b[i][j - 2]) ||
+							b[i][j - 1] ||
+							(b[i - 1][j] && j > 1 && ('.' == p[j - 2] || s[i - 1] == p[j - 2]));
+					}
+				}
+			}
+
+			return b[m][n];
+		}*/
 
 		void HardProblem10::Regular_Expression_Matching()
 		{
