@@ -654,8 +654,8 @@ namespace codechallenges
 		}
 
 		bool publicSolution4msisMatch(string s, string p) {
-			stack<pair<int, int> > positions;
-			vector<vector<bool> > seen(s.size() + 5, vector<bool>(p.size() + 5, false));
+			stack<pair<int, int>> positions;
+			vector<vector<bool>> seen(s.size() + 5, vector<bool>(p.size() + 5, false));
 
 			positions.push(make_pair(0, 0));
 
