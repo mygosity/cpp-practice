@@ -48,5 +48,27 @@ namespace crispyskies
 			}
 			std::cout << s << " }" << std::endl;
 		}
+
+		static void PrintVector(vector<string> vec, string optionalPrepend = "") {
+			string s = optionalPrepend + "{ ";
+			for (int i = 0; i < vec.size(); ++i) {
+				s.append(vec[i]);
+				if (i < vec.size() - 1) {
+					s.append(", ");
+				}
+			}
+			std::cout << s << " }" << std::endl;
+		}
+
+		static void PrintVector(vector<char> vec, string optionalPrepend = "") {
+			string s = optionalPrepend + "{ ";
+			for (int i = 0; i < vec.size(); ++i) {
+				s.push_back(vec[i]);
+				if (i < vec.size() - 1) {
+					s.append(", ");
+				}
+			}
+			std::cout << s << " }" << std::endl;
+		}
 	}
 }

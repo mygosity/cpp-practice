@@ -823,12 +823,12 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
-			MyStringToIntegerParser();
 			//RomanNumeralsConversion();
+			//Is_Number_Palindrome();
+			//MyStringToIntegerParser();
+			//Reverse_Integer();
 			//ConvertToZigZag();
 			//LongestPalindromicSubstring();
-			//Is_Number_Palindrome();
-			//Reverse_Integer();
 			//Longest_Substring();
 			//Add_Two_Numbers_Linked_List();
 			//Two_Sum();
