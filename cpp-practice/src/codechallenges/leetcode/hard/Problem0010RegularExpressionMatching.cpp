@@ -653,6 +653,50 @@ namespace codechallenges
 			return s_ptr >= s.size();
 		}
 
+		//wrote an improved version of the old problem faster by about 8x
+		bool fasterIsMatch(string& s, string& p, int si = 0, int pi = 0) {
+			if (p.size() - pi <= 0) {
+				return s.size() - si <= 0;
+			}
+			int plen = p.size();
+			int slen = s.size();
+
+			for (pi; pi < plen; ++pi) {
+				char c = p[pi];
+				char nc = pi + 1 < plen ? p[pi + 1] : ' ';
+				if (c == '*') {
+					continue;
+				}
+				if (nc != '*') {
+					//ran out of string vs pointer moving through the string
+					if (si >= slen) {
+						return false;
+					}
+					//static character mismatch returns false
+					if (s[si] != c && c != '.') {
+						return false;
+					}
+					++si;
+				}
+				else
+				{
+					if (si < slen) {
+						bool foundMatch = fasterIsMatch(s, p, si, pi + 2);
+						for (si; si < slen; ++si) {
+							if (c == '.' || s[si] == c) {
+								foundMatch = foundMatch || fasterIsMatch(s, p, si + 1, pi + 2);
+							}
+							else {
+								break;
+							}
+						}
+						return foundMatch;
+					}
+				}
+			}
+			return si >= s.size();
+		}
+
 		bool publicSolution4msisMatch(string s, string p) {
 			stack<pair<int, int>> positions;
 			vector<vector<bool>> seen(s.size() + 5, vector<bool>(p.size() + 5, false));
