@@ -38,6 +38,21 @@ namespace crispyskies
 			std::cout << msg << std::endl;
 		}
 
+		static void PrintVector(vector<vector<int>> vec, string optionalPrepend = "") {
+			string s = optionalPrepend + "{\n";
+			for (int i = 0; i < vec.size(); ++i) {
+				s.append("\t{ ");
+				for (int j = 0; j < vec[i].size(); ++j) {
+					s.append(std::to_string(vec[i][j]));
+					if (j < vec[i].size() - 1) {
+						s.append(", ");
+					}
+				}
+				s.append("}\n");
+			}
+			std::cout << s << "}" << std::endl;
+		}
+
 		static void PrintVector(vector<int> vec, string optionalPrepend = "") {
 			string s = optionalPrepend + "{ ";
 			for (int i = 0; i < vec.size(); ++i) {
