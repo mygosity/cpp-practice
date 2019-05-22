@@ -156,6 +156,8 @@
     <ClCompile Include="src\codechallenges\leetcode\hard\Problem0010RegularExpressionMatching.cpp" />
     <ClCompile Include="src\codechallenges\leetcode\problem-set-001.cpp" />
     <ClCompile Include="src\cpp-practice.cpp" />
+    <ClCompile Include="src\utils\sorting\blocksort.cpp" />
+    <ClCompile Include="src\utils\sorting\quicksort.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\codechallenges\leetcode\hard\Problem0010RegularExpressionMatching.h" />
@@ -163,6 +165,8 @@
     <ClInclude Include="src\codechallenges\leetcode\problem-set-001.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\utils\general.h" />
+    <ClInclude Include="src\utils\sorting\blocksort.h" />
+    <ClInclude Include="src\utils\sorting\quicksort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
