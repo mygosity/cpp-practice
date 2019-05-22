@@ -7,6 +7,86 @@ namespace codechallenges
 	{
 		using ListNode = ProblemSet001::ListNode;
 
+		
+
+		/**********************************************************************
+		Problem 733: Easy - Flood Fill
+		An image is represented by a 2-D array of integers, each integer 
+		representing the pixel value of the image (from 0 to 65535).
+
+		Given a coordinate (sr, sc) representing the starting pixel 
+		(row and column) of the flood fill, and a pixel value newColor, 
+		"flood fill" the image.
+
+		To perform a "flood fill", consider the starting pixel, plus any pixels 
+		connected 4-directionally to the starting pixel of the same color as the 
+		starting pixel, plus any pixels connected 4-directionally to those pixels 
+		(also with the same color as the starting pixel), and so on. 
+		Replace the color of all of the aforementioned pixels with the newColor.
+		At the end, return the modified image.
+		***********************************************************************/
+		vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+			int targetColor = image[sr][sc];
+			image[sr][sc] = newColor;
+			stack<int> stack;
+			stack.push(sc);
+			stack.push(sr);
+
+			auto checked = unique_ptr<bool[]>{ new bool[image.size() * image[0].size()]{0} };
+			//std::cout << "row: -> image.size(): " << image.size() << " col -> image[0].size(): " << image[0].size() << std::endl;
+
+			while (!stack.empty()) {
+				int row = stack.top();
+				stack.pop();
+				int col = stack.top();
+				stack.pop();
+
+				int index = row + col * image.size();
+				// std::cout << "i: " << index << " image.size() * image[0].size(): " << image.size() * image[0].size() << std::endl;
+				if (checked[index] == 1) {
+					break;
+				}
+				checked[index] = 1;
+				if (row - 1 > -1) {
+					if (image[row - 1][col] == targetColor) {
+						image[row - 1][col] = newColor;
+						stack.push(col);
+						stack.push(row - 1);
+					}
+				}
+				if (row + 1 < image.size()) {
+					if (image[row + 1][col] == targetColor) {
+						image[row + 1][col] = newColor;
+						stack.push(col);
+						stack.push(row + 1);
+					}
+				}
+				if (col - 1 > -1) {
+					if (image[row][col - 1] == targetColor) {
+						image[row][col - 1] = newColor;
+						stack.push(col - 1);
+						stack.push(row);
+					}
+				}
+				if (col + 1 < image[0].size()) {
+					if (image[row][col + 1] == targetColor) {
+						image[row][col + 1] = newColor;
+						stack.push(col + 1);
+						stack.push(row);
+					}
+				}
+			}
+			return image;
+		}
+
+		void FloodFillChallenge() {
+			vector<vector<int>> vec = {
+				{0, 0, 0},
+				{0, 0, 0}
+			};
+			floodFill(vec, 0, 0, 0);
+		}
+
 		/**********************************************************************
 			Problem 113: Medium - Path Sum II
 
@@ -1144,7 +1224,8 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
-			ThreeSumProblem();
+			FloodFillChallenge();
+			//ThreeSumProblem();
 			//RomanNumeralsConversion();
 			//Is_Number_Palindrome();
 			//MyStringToIntegerParser();
