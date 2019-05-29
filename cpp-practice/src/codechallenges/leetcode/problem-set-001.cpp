@@ -1395,8 +1395,18 @@ namespace codechallenges
 
 		void ProblemSet001::Start() 
 		{
+			string test = "12345678";
+			for (int i = 0; i < test.size(); ++i) {
+				if (i == 2) {
+					int t = test[i];
+					test[i] = test[6];
+					test[6] = t;
+				}
+			}
+			LOG(test);
+
 			//FloodFillChallenge();
-			ThreeSumProblem();
+			//ThreeSumProblem();
 			//RomanNumeralsConversion();
 			//Is_Number_Palindrome();
 			//MyStringToIntegerParser();

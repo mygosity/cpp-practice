@@ -154,6 +154,7 @@
     <ClCompile Include="src\codechallenges\leetcodeHub.cpp" />
     <ClCompile Include="src\codechallenges\leetcode\hard\Problem0004MedianSortedArray.cpp" />
     <ClCompile Include="src\codechallenges\leetcode\hard\Problem0010RegularExpressionMatching.cpp" />
+    <ClCompile Include="src\codechallenges\leetcode\hard\Problem0032LongestValidParentheses.cpp" />
     <ClCompile Include="src\codechallenges\leetcode\problem-set-001.cpp" />
     <ClCompile Include="src\cpp-practice.cpp" />
     <ClCompile Include="src\utils\sorting\blocksort.cpp" />
@@ -162,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="src\codechallenges\leetcode\hard\Problem0010RegularExpressionMatching.h" />
     <ClInclude Include="src\codechallenges\leetcode\hard\Problem0004MedianSortedArray.h" />
+    <ClInclude Include="src\codechallenges\leetcode\hard\Problem0032LongestValidParentheses.h" />
     <ClInclude Include="src\codechallenges\leetcode\problem-set-001.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\utils\general.h" />
