@@ -824,6 +824,7 @@ namespace codechallenges
 		{
 			string aaa = "0123456";
 			//LOG(aaa.substr(2));
+			//need a note here for reference as to what the fuck this is
 			using matcher = bool (*)(string, string);
 			matcher matchingFunction = &isMatch;
 			map<string, matcher> delegators = {
@@ -863,6 +864,7 @@ namespace codechallenges
 			int count = 0;
 			for (auto it = tests.begin(); it != tests.end(); it++, count++)
 			{
+				//map elements referenced by first and second??
 				auto currentTest = it->first;
 				auto correctAnswer = it->second;
 				for (auto func = delegators.begin(); func != delegators.end(); func++) {
