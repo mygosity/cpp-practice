@@ -1,0 +1,16 @@
+
+
+            for (std::list<int>::reverse_iterator itr = roll.rbegin(); itr != roll.rend(); ++itr, --medcount) {
+                int current = *itr;
+                auto ptr = itr;
+                std::advance(ptr, 1);
+                if (front == current) {
+                    roll.erase(ptr.base());
+                    erased = true;
+                } else if (next <= current) {
+                    roll.insert(ptr.base(), next);
+                    inserted = true;
+                }
+                // if (medcount == midIndex) medianPtr = ptr.base();
+                if (erased && inserted) break;
+            }

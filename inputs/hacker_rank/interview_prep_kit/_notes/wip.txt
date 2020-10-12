@@ -1,0 +1,166 @@
+#include "main.h"
+
+#include <algorithm>
+#include <deque>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#define STRINGIFY(s) #s
+#define TEST_ANSWER(tag, yourAnswer, theirAnswer) std::cout << tag << "\nyour: " << yourAnswer << "\nthem: " << theirAnswer << '\n';
+#define PRINT_INPUT_SIZE(hrinput) \
+    std::cout << STRINGIFY(hrinput) << " params: " << hrinput.params.size() << " args: " << hrinput.args.size() << '\n';
+
+struct HRInput {
+    std::vector<long> args;
+    std::vector<long> params;
+};
+
+HRInput getHackerRankInputs(const std::string& baseFilePath, const std::string& filename) {
+    const std::string inputpath = baseFilePath + filename;
+    std::string inputstring = mgcp::FileHelper::ReadFile(inputpath);
+    std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+
+    HRInput hr;
+    std::vector<std::string> params = mgcp::SplitString(inputsplit[0], ' ');
+    std::vector<std::string> args = mgcp::SplitString(inputsplit[1], ' ');
+    for (std::string& s : params) {
+        hr.params.push_back(std::stol(s));
+    }
+    for (std::string& s : args) {
+        hr.args.push_back(std::stol(s));
+    }
+    return hr;
+}
+
+struct Info {
+    Info(int i) { indices.push_back(i); }
+    vector<int> indices;
+};
+
+double getFactorial(long x) {
+    if (x <= 1) return x;
+    return x * getFactorial(x - 1);
+}
+
+// Complete the countTriplets function below.
+// long countTriplets(vector<long> arr, long r) {
+//     long triplets = 0;
+//     sort(arr.begin(), arr.end(), [](long a, long b) { return a < b; });
+//     map<long, Info> chk;
+//     for (int i = 0; i < arr.size(); ++i) {
+//         const long c = arr[i];
+//         const auto target = chk.find(c);
+//         if (target == chk.end()) {
+//             chk.emplace(c, i);
+//         } else {
+//             target->second.indices.push_back(i);
+//         }
+//     }
+//     for (int i = 0; i < arr.size(); ++i) {
+//         const long a = arr[i];
+//         const auto at = chk.find(a);
+//         if (r != 1) {
+//             const long b = a * r;
+//             const long c = b * r;
+//             const auto bt = chk.find(b);
+//             const auto ct = chk.find(c);
+//             if (bt != chk.end() && ct != chk.end()) {
+//                 const long ac = at->second.indices.size();
+//                 const long bc = bt->second.indices.size();
+//                 const long cc = ct->second.indices.size();
+//                 triplets += ac * bc * cc;
+//             }
+//         } else {
+//             const long len = at->second.indices.size();
+//             if (len >= 3) {
+//                 triplets += getFactorial(len) / (6 * getFactorial(len - 3));
+//                 // len! / k!(len-k)!
+//             }
+//         }
+//         at->second.indices.clear();
+//     }
+//     cout << "triplets: " << triplets << '\n';
+//     return triplets;
+// }
+
+// long countTriplets(vector<long> arr, long r) {
+//     long triplets = 0;
+//     map<long, int> chk;
+//     int i = 0, j = 1;
+//     for (; i < arr.size() - 2; ++i, ++j) {
+//         const long current = arr[i];
+//         if (i > 0) {
+//             // remove self if it was added and found in the next list
+//             const auto ptr = chk.find(current);
+//             if (ptr != chk.end()) {
+//                 ptr->second--;
+//             }
+//         }
+//         if (j < arr.size()) {
+//             int next = arr[j];
+//             while (current <= next && j < arr.size()) {
+//                 const auto target = chk.find(next);
+//                 if (target == chk.end()) {
+//                     chk.insert({next, 1});
+//                 } else {
+//                     target->second++;
+//                 }
+//                 next = arr[++j];
+//             }
+//         }
+//         const auto tb = chk.find(current * r);
+//         const auto tc = chk.find(current * r * r);
+//         if (tb != chk.end() && tc != chk.end()) {
+//             triplets += tb->second * tc->second / 2;
+//         }
+//     }
+//     return triplets;
+// }
+
+// problem is that some numbers are ahead and these arent sequential
+long countTriplets(vector<long> arr, long r) {
+    long triplets = 0;
+    map<long, int> chk;
+    int i = 0, j = 1;
+    for (i = arr.size() - 1; i >= 0; --i) {
+        long curr = arr[i];
+
+        const auto tb = chk.find(curr * r);
+        const auto tc = chk.find(curr * r * r);
+        if (tb != chk.end() && tc != chk.end()) {
+            triplets += tb->second * tc->second;
+        }
+
+        const auto target = chk.find(curr);
+        if (target == chk.end()) {
+            chk.insert({curr, 1});
+        } else {
+            target->second++;
+        }
+    }
+    return triplets;
+}
+
+int main(int argc, char* argv[]) {
+    std::vector<long> test1(100);
+    std::fill(test1.begin(), test1.end(), 1);
+    TEST_ANSWER("\ntest1", countTriplets(test1, 1), 161700);
+
+    std::vector<long> test2 = {1, 2, 1, 2, 4};
+    TEST_ANSWER("\ntest1", countTriplets(test2, 2), 3);
+
+    const std::string baseFilePath = "./_logs/hacker_rank/interview_prep_kit/hashmaps/geoprogression/";
+
+    HRInput input03 = getHackerRankInputs(baseFilePath, "input03.txt");
+    HRInput input06 = getHackerRankInputs(baseFilePath, "input06.txt");
+    HRInput input10 = getHackerRankInputs(baseFilePath, "input10.txt");
+    HRInput input11 = getHackerRankInputs(baseFilePath, "input11.txt");
+    // PRINT_INPUT_SIZE(input11);
+
+    TEST_ANSWER("\ninput03", countTriplets(input03.args, input03.params[1]), 166661666700000);
+    TEST_ANSWER("\ninput06", countTriplets(input06.args, input06.params[1]), 2325652489);
+    TEST_ANSWER("\ninput10", countTriplets(input10.args, input10.params[1]), 1339347780085);
+    TEST_ANSWER("\ninput11", countTriplets(input11.args, input11.params[1]), 1667018988625);
+}

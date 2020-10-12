@@ -1,0 +1,129 @@
+My solution is based on the following article from wikipedia: https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
+public class Solution {
+
+    static int commonChild(String a, String b){
+        int[][] C = new int[a.length()+1][b.length()+1];
+
+        for (int i = 0; i < a.length(); i++) {
+            for (int j = 0; j < b.length(); j++) {
+                if (a.charAt(i) == b.charAt(j)) {
+                    C[i+1][j+1] = C[i][j] + 1;
+                } else {
+                    C[i+1][j+1] = Math.max(C[i+1][j], C[i][j+1]);
+                }
+            }
+        }
+        for (int i = 0; i < a.length(); i++) {
+        }
+
+        return C[a.length()][b.length()];
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String s1 = in.next();
+        String s2 = in.next();
+        int result = commonChild(s1, s2);
+        System.out.println(result);
+    }
+}
+
+
+
+static map<double, int> chklist;
+static vector<vector<int>> letters1(26);
+
+int commonChild(string& s1, string& s2, int i = 0, int j = 0) {
+    if (i >= s1.size() - 1 || j >= s2.size() - 1) return 0;
+    int currentIndex = i;
+    // cout << "i: " << i << " j: " << j << '\n';
+    int total = 0;
+    // vector<int> letters1(26, -1);
+    if (i == 0 && j == 0) {
+        letters1.clear();
+        chklist.clear();
+        for (; i < s1.size(); ++i) {
+            const int c = (int)s1[i] - (int)'A';
+            letters1[c].push_back(i);
+            // cout << "i:" << i << " size:" << letters1[c].size() << '\n';
+            // if (letters1[c] == -1) letters1[c] = i;
+        }
+    }
+    vector<int> letters2(26, -1);
+    int max = 0;
+    for (; j < s2.size(); ++j) {
+        const int c = (int)s2[j] - (int)'A';
+        const vector<int>& targetList = letters1[c];
+        if (targetList.size()) {
+            int targetIndex = -1;
+            for (int k = 0; k < targetList.size(); ++k) {
+                if (targetList[k] > currentIndex) {
+                    targetIndex = targetList[k];
+                    break;
+                }
+            }
+            // cout << "targetIndex: " << targetIndex << '\n';
+            if (targetIndex > currentIndex) {
+                if (letters2[c] == -1) {
+                    int currentLength = 1;
+                    letters2[c] = targetIndex;
+                    double hash = (targetIndex + 1) + s1.size() * (j + 1);
+                    const auto target = chklist.find(hash);
+                    if (target == chklist.end()) {
+                        int value = commonChild(s1, s2, targetIndex + 1, j + 1);
+                        chklist.insert({hash, value});
+                        currentLength += value;
+                    } else {
+                        currentLength += target->second;
+                    }
+                    if (currentLength > max) {
+                        max = currentLength;
+                    }
+                }
+            }
+        }
+    }
+    total += max;
+    return total;
+}
+
+
+static map<double, int> chklist;
+int commonChild(string& s1, string& s2, int i = 0, int j = 0) {
+    if (i == 0 && j == 0) chklist.clear();
+    if (i >= s1.size() - 1 || j >= s2.size() - 1) return 0;
+    // cout << "i: " << i << " j: " << j << '\n';
+    int total = 0;
+    vector<int> letters1(26, -1);
+    for (; i < s1.size(); ++i) {
+        const int c = (int)s1[i] - (int)'A';
+        if (letters1[c] == -1) letters1[c] = i;
+    }
+    vector<int> letters2(26, -1);
+    int max = 0;
+    for (; j < s2.size(); ++j) {
+        const int c = (int)s2[j] - (int)'A';
+        const int targetIndex = letters1[c];
+        if (targetIndex > -1) {
+            if (letters2[c] == -1) {
+                int currentLength = 1;
+                letters2[c] = targetIndex;
+                double hash = (targetIndex + 1) + s1.size() * (j + 1);
+                const auto target = chklist.find(hash);
+                if (target == chklist.end()) {
+                    int value = commonChild(s1, s2, targetIndex + 1, j + 1);
+                    chklist.insert({hash, value});
+                    currentLength += value;
+                } else {
+                    currentLength += target->second;
+                }
+                if (currentLength > max) {
+                    max = currentLength;
+                }
+            }
+        }
+    }
+    total += max;
+    return total;
+}

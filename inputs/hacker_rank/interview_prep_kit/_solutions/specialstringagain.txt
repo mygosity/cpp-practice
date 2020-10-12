@@ -1,0 +1,233 @@
+#include "main.h"
+
+#include <algorithm>
+#include <deque>
+#include <list>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#define STRINGIFY(s) #s
+#define TEST_ANSWER(tag, yourAnswer, theirAnswer) std::cout << tag << "\nyour: " << yourAnswer << "\nthem: " << theirAnswer << '\n';
+#define PRINT_INPUT_SIZE(input) std::cout << STRINGIFY(input) << " args: " << input.args.size() << " data: " << input.data.size() << '\n';
+
+// based off of HackerRank input files
+struct FileInput {
+    std::vector<std::string> args;
+    std::vector<std::string> data;
+};
+
+FileInput getVectorizedFileInput(const std::string& filepath) {
+    std::string inputstring = mgcp::FileHelper::ReadFile(filepath);
+    std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+
+    FileInput input;
+    input.args = mgcp::SplitString(inputsplit[0], ' ');
+    input.data = mgcp::SplitString(inputsplit[1], ' ');
+    return input;
+}
+
+struct IntegerFileInput {
+    IntegerFileInput(FileInput fi) {
+        for (std::string& s : fi.args) args.push_back(std::stoi(s));
+        for (std::string& s : fi.data) data.push_back(std::stoi(s));
+    }
+    std::vector<int> args;
+    std::vector<int> data;
+};
+
+long naiveCount(int n, string s) {
+    long t = 0;
+    for (int i = 0; i < n - 1; ++i) {
+        const char currentChar = s[i];
+        for (int j = i + 1; j < n; ++j) {
+            int left = i;
+            int right = j;
+            bool isEvenLength = (right - left + 1) % 2 == 0;
+            if (currentChar == s[right]) {
+                bool isValid = true;
+                while (left < right) {
+                    // a bbbb a
+                    if (s[left] != currentChar || s[right] != currentChar) {
+                        isValid = false;
+                        break;
+                    }
+                    ++left;
+                    --right;
+                }
+                if (isValid) {
+                    t++;
+                }
+            } else {
+                if (isEvenLength) {
+                    break;
+                }
+            }
+        }
+    }
+    return t + n;
+}
+
+long sequenceTotal(int n) {
+    if (n == 0) return 0;
+    return n + sequenceTotal(n - 1);
+}
+
+long substrCount2(int n, string s) {
+    long t = 0;
+    for (int i = 0; i < n - 1; ++i) {
+        const char currentChar = s[i];
+        char otherChar = '\0';
+
+        int k = i + 1;
+        while (k < n) {
+            if (s[k] != currentChar) {
+                if (otherChar == '\0') {
+                    otherChar = s[k];
+                } else {
+                    if (s[k] != otherChar) {
+                        // this can't work we need to break completely
+                        --k;
+                        break;
+                    }
+                }
+            }
+            ++k;
+        }
+        if (otherChar == '\0') {
+            // handle special case just length factorial - n single cases since we add them at the end
+            int len = k - i;
+            t += sequenceTotal(len) - len;
+            cout << "tes: " << sequenceTotal(len) << " k: " << k << " len: " << len << '\n';
+        } else {
+            for (int j = i + 1; j < n; ++j) {
+                bool continueWithJ = true;
+                if (currentChar == s[j]) {
+                    int left = i;
+                    int right = j;
+                    bool isEvenLength = (right - left + 1) % 2 == 0;
+                    bool targetingOther = false;
+                    bool isValid = true;
+
+                    while (left < right) {
+                        if (!targetingOther) {
+                            if (s[left] != currentChar || s[right] != currentChar) {
+                                targetingOther = true;
+                            }
+                        } else {
+                            if (s[left] != otherChar || s[right] != otherChar) {
+                                // third char detected, this taints the entire block from f onwards
+                                continueWithJ = false;
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        if (s[left] != s[right]) {
+                            isValid = false;
+                            break;
+                        }
+                        ++left;
+                        --right;
+                    }
+                    if (isValid) {
+                        if (!isEvenLength && s[int((right - left) / 2) + left] == otherChar || isEvenLength) {
+                            cout << "firstChar: " << currentChar << " otherChar: " << otherChar  //
+                                 << " string: " << s.substr(i, j - i + 1)                        //
+                                 << " middle: " << s[int((right - left) / 2) + left] << '\n';
+                            ++t;
+                        }
+                    }
+                }
+
+                if (!continueWithJ) {
+                    break;
+                }
+            }
+        }
+    }
+    return t + n;
+}
+
+long substrCount(int n, string s) {
+    long t = 0;
+    for (int i = 0; i < n - 1; ++i) {
+        const char currentChar = s[i];
+        char otherChar = '\0';
+
+        for (int j = i + 1; j < n; ++j) {
+            bool continueWithJ = true;
+            if (currentChar == s[j]) {
+                int left = i;
+                int right = j;
+                bool isEvenLength = (right - left + 1) % 2 == 0;
+                const char middleChar = s[int((right - left) / 2) + left];
+                bool isValid = true;
+
+                while (left < right) {
+                    if (s[left] != currentChar || s[right] != currentChar) {
+                        isValid = false;
+                        // if (otherChar != '\0') {
+                        //     if (s[left] != otherChar || s[right] != otherChar) {
+                        //         continueWithJ = false;
+                        //     }
+                        // }
+                        break;
+                    }
+                    ++left;
+                    --right;
+                }
+                if (isValid) {
+                    ++t;
+                    // cout << "firstChar: " << currentChar << " otherChar: " << otherChar  //
+                    //      << " string: " << s.substr(i, j - i + 1)                        //
+                    //      << " middle: " << s[int((right - left) / 2) + left] << '\n';
+                }
+            } else {
+                if (otherChar == '\0') {
+                    otherChar = s[j];
+                } else {
+                    continueWithJ = false;
+                }
+            }
+
+            if (!continueWithJ) {
+                break;
+            }
+        }
+    }
+    return t + n;
+}
+
+int main(int argc, char* argv[]) {
+    const std::string baseFilePath = "./inputs/";
+    FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
+    PRINT_INPUT_SIZE(input);
+
+    // string teststr = "abcbaba";
+    // string testsub = teststr.substr(3, 4);
+    // cout << "isPalinDrome: " << isPalinDrome(testsub) << " testsub: " << testsub << '\n';
+    // cout << "substrCount: " << substrCount(teststr.size(), teststr) << '\n';
+
+    const std::string customFilePath = "./_logs/hacker_rank/interview_prep_kit/strings/specialstringagain/";
+    const std::vector<std::vector<std::string>> cases({
+        {customFilePath + "input10.txt", "708774"},  //
+        {customFilePath + "input15.txt", "66516"},   //
+    });
+
+    // cout << "sequenceTotal: " << sequenceTotal(4) << '\n';
+    string t1 = "aaaa";
+    long answer = substrCount(t1.size(), t1);
+    cout << "substrCount: " << answer << '\n';
+    // return 0;
+
+    for (const std::vector<std::string>& vs : cases) {
+        std::string inputstring = mgcp::FileHelper::ReadFile(vs[0]);
+        std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+        cout << "size of input: " << inputsplit[1].size() << '\n';
+        long answer = substrCount(inputsplit[1].size(), inputsplit[1]);
+        cout << "substrCount: " << answer << " expected: " << vs[1] << '\n';
+        // IntegerFileInput fileInput(getVectorizedFileInput(s));
+        // PRINT_INPUT_SIZE(fileInput);
+    }
+}

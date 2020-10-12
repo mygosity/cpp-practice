@@ -1,0 +1,92 @@
+#include "main.h"
+
+#include <algorithm>
+#include <deque>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#define STRINGIFY(s) #s
+#define TEST_ANSWER(tag, yourAnswer, theirAnswer) std::cout << tag << "\nyour: " << yourAnswer << "\nthem: " << theirAnswer << '\n';
+#define PRINT_INPUT_SIZE(input) \
+    std::cout << STRINGIFY(input) << " params: " << input.params.size() << " args: " << input.args.size() << '\n';
+
+// based off of HackerRank input files
+struct FileInput {
+    std::vector<std::string> args;
+    std::vector<std::string> params;
+};
+
+FileInput getVectorizedFileInput(const std::string& filepath) {
+    std::string inputstring = mgcp::FileHelper::ReadFile(filepath);
+    std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+
+    FileInput input;
+    input.params = mgcp::SplitString(inputsplit[0], ' ');
+    input.args = mgcp::SplitString(inputsplit[1], ' ');
+    return input;
+}
+
+struct GeoFileInput {
+    GeoFileInput(FileInput fi) {
+        for (std::string& s : fi.args) args.push_back(std::stol(s));
+        for (std::string& s : fi.params) params.push_back(std::stol(s));
+    }
+    std::vector<long> args;
+    std::vector<long> params;
+};
+
+// problem is that some numbers are ahead and these arent sequential
+long countTriplets(vector<long> arr, long r) {
+    long triplets = 0;
+    map<long, long> chk;
+    map<long, long> chkpairs;
+    int i = 0, j = 1;
+    for (i = arr.size() - 1; i >= 0; --i) {
+        long curr = arr[i];
+        const auto pairTarget = chkpairs.find(curr * r);
+        if (pairTarget != chkpairs.end()) {
+            triplets += pairTarget->second;
+        }
+        const auto pairSingle = chk.find(curr * r);
+        if (pairSingle != chk.end()) {
+            chkpairs[curr] = chkpairs[curr] + chk[curr * r];
+        }
+        chk[curr] = chk[curr] + 1;
+    }
+    return triplets;
+}
+
+// def countTriplets(arr, r):
+//     count = 0
+//     dict = {}
+//     dictPairs = {}
+
+//     for i in reversed(arr):
+//             if i*r in dictPairs:
+//                     count += dictPairs[i*r]
+//             if i*r in dict:
+//                     dictPairs[i] = dictPairs.get(i, 0) + dict[i*r]
+
+//             dict[i] = dict.get(i, 0) + 1
+
+//     return count
+
+int main(int argc, char* argv[]) {
+    const std::string baseFilePath = "./inputs/";
+    FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
+    PRINT_INPUT_SIZE(input);
+
+    const std::string geofilepath = "./_logs/hacker_rank/interview_prep_kit/hashmaps/geoprogression/";
+    GeoFileInput input03 = getVectorizedFileInput(geofilepath + "input03.txt");
+    GeoFileInput input06 = getVectorizedFileInput(geofilepath + "input06.txt");
+    GeoFileInput input10 = getVectorizedFileInput(geofilepath + "input10.txt");
+    GeoFileInput input11 = getVectorizedFileInput(geofilepath + "input11.txt");
+    // PRINT_INPUT_SIZE(input11);
+
+    TEST_ANSWER("\ninput03", countTriplets(input03.args, input03.params[1]), 166661666700000);
+    TEST_ANSWER("\ninput06", countTriplets(input06.args, input06.params[1]), 2325652489);
+    TEST_ANSWER("\ninput10", countTriplets(input10.args, input10.params[1]), 1339347780085);
+    TEST_ANSWER("\ninput11", countTriplets(input11.args, input11.params[1]), 1667018988625);
+}

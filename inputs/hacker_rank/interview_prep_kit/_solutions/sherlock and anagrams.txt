@@ -1,0 +1,75 @@
+#include "main.h"
+
+#include <map>
+
+using namespace std;
+
+map<string, int> traversed;
+
+int sherlockAndAnagrams(string s) {
+    if (traversed.find(s) != traversed.end()) {
+        return traversed[s];
+    }
+    int totalAnagrams = 0;
+    int charLength = 1;
+    while (charLength < s.size()) {
+        for (int i = 0; i < s.size() - 1; ++i) {
+            // ensures we can get a substring without exceeding string length
+            if (i + charLength - 1 < s.size() - 1) {
+                const string currentString = s.substr(i, charLength);
+                // cout << "currentString: " << currentString.c_str() << " i: " << i << '\n';
+                vector<int> checkList(charLength);
+                fill(checkList.begin(), checkList.end(), 0);
+
+                for (int j = i + 1; j < s.size(); ++j) {
+                    bool foundAnagram = true;
+                    for (int m = 0; m < charLength; ++m) {
+                        bool foundEntry = false;
+                        for (int k = 0; k < charLength; ++k) {
+                            if (s[j + m] == currentString[k]) {
+                                if (!checkList[k]) {
+                                    checkList[k] = 1;
+                                    foundEntry = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!foundEntry) {
+                            foundAnagram = false;
+                            break;
+                        }
+                    }
+                    if (foundAnagram) {
+                        // check if a total match has been found, add one to anagram and then create a substring to recurse
+                        for (int k = 0; k < checkList.size(); ++k) {
+                            if (!checkList[k]) {
+                                foundAnagram = false;
+                                break;
+                            }
+                        }
+                        if (foundAnagram) {
+                            ++totalAnagrams;
+                            // cout << "found one" << '\n';
+                        }
+                    }
+                    fill(checkList.begin(), checkList.end(), 0);
+                }
+            }
+        }
+        // if one pass and there's no matches there's no way there's any anagrams, early exit out
+        if (totalAnagrams == 0) return 0;
+        ++charLength;
+    }
+
+    traversed[s] = totalAnagrams;
+    return totalAnagrams;
+}
+
+int main(int argc, char* argv[]) {
+    std::string test = "hello";
+    for (const char& c : test) {
+        // std::cout << "c: " << c << '\n';
+    }
+    std::string target = "mhmgmbbccbbaffhbncgndbffkjbhmkfncmihhdhcebmchnfacdigflhhbekhfejblegakjjiejeenibemfmkfjbkkmlichlkbnhc";
+    std::cout << "target: " << target.c_str() << " anagrams: " << sherlockAndAnagrams(target) << '\n';
+}

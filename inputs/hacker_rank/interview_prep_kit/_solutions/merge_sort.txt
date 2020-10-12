@@ -1,0 +1,193 @@
+#include "main.h"
+
+#include <algorithm>
+#include <deque>
+#include <list>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#define STRINGIFY(s) #s
+#define TEST_ANSWER(tag, yourAnswer, theirAnswer) std::cout << tag << "\nyour: " << yourAnswer << "\nthem: " << theirAnswer << '\n';
+#define PRINT_INPUT_SIZE(input) std::cout << STRINGIFY(input) << " args: " << input.args.size() << " data: " << input.data.size() << '\n';
+
+// based off of HackerRank input files
+struct FileInput {
+    std::vector<std::string> args;
+    std::vector<std::string> data;
+};
+
+FileInput getVectorizedFileInput(const std::string& filepath) {
+    std::string inputstring = mgcp::FileHelper::ReadFile(filepath);
+    std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+
+    FileInput input;
+    input.args = mgcp::SplitString(inputsplit[0], ' ');
+    input.data = mgcp::SplitString(inputsplit[1], ' ');
+    return input;
+}
+
+struct IntegerFileInput {
+    IntegerFileInput(FileInput fi) {
+        for (std::string& s : fi.args) args.push_back(std::stoi(s));
+        for (std::string& s : fi.data) data.push_back(std::stoi(s));
+    }
+    std::vector<int> args;
+    std::vector<int> data;
+};
+
+void merge2(std::vector<int>& list, int l, int m, int r, long& c) {
+    std::vector<int> t1;
+    for (int i = l; i < m + 1; ++i) {
+        t1.push_back(list[i]);
+    }
+    std::vector<int> t2;
+    for (int i = m + 1; i <= r; ++i) {
+        t2.push_back(list[i]);
+    }
+    int left = 0;
+    int right = 0;
+    int current = l;
+    while (current <= r) {
+        if (left < t1.size() && right < t2.size()) {
+            if (t1[left] <= t2[right]) {
+                list[current++] = t1[left++];
+            } else {
+                list[current++] = t2[right++];
+                c += t1.size() - left;
+            }
+        } else {
+            while (left < t1.size()) {
+                list[current++] = t1[left++];
+            }
+            while (right < t2.size()) {
+                list[current++] = t2[right++];
+            }
+        }
+    }
+}
+
+void merge_sort2(std::vector<int>& list, int l, int r, long& c) {
+    if (l < r) {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        merge_sort2(list, l, m, c);
+        merge_sort2(list, m + 1, r, c);
+        merge2(list, l, m, r, c);
+    }
+}
+
+// Complete the countInversions function below.
+long countInversions(vector<int> arr) {
+    long answer = 0;
+    merge_sort2(arr, 0, arr.size() - 1, answer);
+    return answer;
+}
+
+void merge_in_place(std::vector<int>& list, int l, int m, int r) {
+    int left = l;
+    int right = m + 1;
+    while (left < m + 1 || right < r + 1) {
+        if (left < m + 1 && right < r + 1) {
+            if (list[left] <= list[right]) {
+                left++;
+            } else {
+                std::swap(list[left], list[right++]);
+            }
+        } else if (right < r + 1) {
+            left = right;
+            ++right;
+            while (right < r + 1) {
+                if (list[left] > list[right]) {
+                    std::swap(list[left], list[right]);
+                }
+                left++;
+                right++;
+            }
+            return;
+        } else {
+            right = left + 1;
+            while (right < r + 1) {
+                if (list[left] > list[right]) {
+                    std::swap(list[left], list[right]);
+                }
+                left++;
+                right++;
+            }
+            return;
+        }
+    }
+}
+
+void merge(std::vector<int>& list, int l, int m, int r) {
+    std::vector<int> t1;
+    for (int i = l; i < m + 1; ++i) {
+        t1.push_back(list[i]);
+    }
+    std::vector<int> t2;
+    for (int i = m + 1; i <= r; ++i) {
+        t2.push_back(list[i]);
+    }
+    int left = 0;
+    int right = 0;
+    int current = l;
+    while (current <= r) {
+        if (left < t1.size() && right < t2.size()) {
+            if (t1[left] <= t2[right]) {
+                list[current++] = t1[left++];
+            } else {
+                list[current++] = t2[right++];
+            }
+        } else {
+            while (left < t1.size()) {
+                list[current++] = t1[left++];
+            }
+            while (right < t2.size()) {
+                list[current++] = t2[right++];
+            }
+        }
+    }
+}
+
+void merge_sort(std::vector<int>& list, int l, int r) {
+    if (l < r) {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        merge_sort(list, l, m);
+        merge_sort(list, m + 1, r);
+        merge(list, l, m, r);
+    }
+}
+
+int main(int argc, char* argv[]) {
+    const std::string baseFilePath = "./inputs/";
+    FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
+    PRINT_INPUT_SIZE(input);
+
+    const std::string customFilePath = "./_logs/hacker_rank/interview_prep_kit/sorting/mergesort/";
+    const std::vector<std::string> cases({
+        customFilePath + "customin01.txt",  //
+        customFilePath + "customin02.txt",  //
+        customFilePath + "customin03.txt",  //
+        customFilePath + "customin04.txt",  //
+        customFilePath + "customin05.txt",  //
+    });
+
+    for (const std::string& s : cases) {
+        IntegerFileInput fileInput(getVectorizedFileInput(s));
+        PRINT_INPUT_SIZE(fileInput);
+
+        std::vector<int> originalData = fileInput.data;
+        mgcp::PrintVector(originalData);
+
+        merge_sort(fileInput.data, 0, fileInput.data.size() - 1);
+        mgcp::PrintVector(fileInput.data);
+    }
+}

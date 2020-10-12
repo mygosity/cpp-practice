@@ -1,0 +1,57 @@
+#include "main.h"
+
+#include <algorithm>
+#include <array>
+#include <functional>
+
+int main(int argc, char* argv[]) {
+    std::string inputRead = mgcp::FileHelper::ReadFile("./_logs/hacker_rank/interview_prep_kit/arrays/array_manipulation/input07.txt");
+    std::cout << "size : " << inputRead.size() << '\n';
+
+    std::vector<std::string> splitList = mgcp::SplitString(inputRead, '\n');
+    std::cout << "size : " << splitList.size() << '\n';
+
+    std::sort(splitList.begin() + 1, splitList.end(), [](std::string a, std::string b) {
+        std::vector<std::string> alist = mgcp::SplitString(a, ' ');
+        std::vector<std::string> blist = mgcp::SplitString(b, ' ');
+        bool condition = std::stoi(alist.at(0)) < std::stoi(blist.at(0));
+        return condition;
+    });
+
+    std::string output = mgcp::JoinStringVector(splitList, "\n");
+    mgcp::FileHelper::WriteFile("./_logs/test.txt", output);
+
+    std::sort(splitList.begin() + 1, splitList.end(), [](std::string a, std::string b) {
+        std::vector<std::string> alist = mgcp::SplitString(a, ' ');
+        std::vector<std::string> blist = mgcp::SplitString(b, ' ');
+        bool condition = std::stoi(alist.at(1)) < std::stoi(blist.at(1));
+        return condition;
+    });
+
+    output = mgcp::JoinStringVector(splitList, "\n");
+    mgcp::FileHelper::WriteFile("./_logs/test2.txt", output);
+}
+
+long arrayManipulation(int n, vector<vector<int>> queries) {
+    long answer = 0;
+    vector<long> list(n);
+    fill(list.begin(), list.end(), 0);
+    for (int i = 0; i < queries.size(); ++i) {
+        const int a = queries[i][0];
+        const int b = queries[i][1];
+        const int c = queries[i][2];
+        list[a - 1] += c;
+        if (b <= n -1 ) {
+            list[b] -= c;
+        }
+    }
+    long total = 0;
+    for (int i = 0; i < n; ++i) {
+        const int c = list[i];
+        if (c != 0) {
+            total += c;
+            answer = total > answer ? total : answer;
+        }
+    }
+    return answer;
+}

@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
     FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
     PRINT_INPUT_SIZE(input);
 
-    const std::string customFilePath = "./_logs/hacker_rank/interview_prep_kit/strings/commonchild/";
+    const std::string customFilePath = "./inputs/hacker_rank/interview_prep_kit/strings/commonchild/";
     const std::vector<std::vector<std::string>> cases({
         {customFilePath + "sample01.txt", "2"},    //
         {customFilePath + "sample02.txt", "0"},    //

@@ -1,0 +1,161 @@
+#include "main.h"
+
+#include <algorithm>
+#include <deque>
+#include <list>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+#define STRINGIFY(s) #s
+#define TEST_ANSWER(tag, yourAnswer, theirAnswer) std::cout << tag << "\nyour: " << yourAnswer << "\nthem: " << theirAnswer << '\n';
+#define PRINT_INPUT_SIZE(input) std::cout << STRINGIFY(input) << " args: " << input.args.size() << " data: " << input.data.size() << '\n';
+
+// based off of HackerRank input files
+struct FileInput {
+    std::vector<std::string> args;
+    std::vector<std::string> data;
+};
+
+FileInput getVectorizedFileInput(const std::string& filepath) {
+    std::string inputstring = mgcp::FileHelper::ReadFile(filepath);
+    std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
+
+    FileInput input;
+    input.args = mgcp::SplitString(inputsplit[0], ' ');
+    input.data = mgcp::SplitString(inputsplit[1], ' ');
+    return input;
+}
+
+struct IntegerFileInput {
+    IntegerFileInput(FileInput fi) {
+        for (std::string& s : fi.args) args.push_back(std::stoi(s));
+        for (std::string& s : fi.data) data.push_back(std::stoi(s));
+    }
+    std::vector<int> args;
+    std::vector<int> data;
+};
+
+// string isValid(string s) {
+//     vector<int> l(26, 0);
+//     map<int, int> recurrenceMap;
+//     int maxInstanceCount = 0;
+//     int nextInstanceCount = 0;
+//     for (int i = 0; i < s.size(); ++i) {
+//         int c = s[i] - 97;
+//         l[c]++;
+//         // cout << "l[c]: " << l[c] << '\n';
+//     }
+
+//     for (int i = 0; i < 26; ++i) {
+//         if (l[i] != 0) {
+//             recurrenceMap[l[i]]++;
+//             // cout << "instances[l[i]]: " << instances[l[i]] << '\n';
+//             // cout << "l[i]: " << l[i] << '\n';
+
+//             if (l[i] > maxInstanceCount) {
+//                 nextInstanceCount = maxInstanceCount;
+//                 maxInstanceCount = l[i];
+//             } else {
+//                 if (l[i] > nextInstanceCount && l[i] != nextInstanceCount) {
+//                     nextInstanceCount = l[i];
+//                 }
+//             }
+//         }
+//     }
+//     cout << "nextInstanceCount: " << nextInstanceCount << " maxInstanceCount: " << maxInstanceCount << '\n';
+//     if (nextInstanceCount > 1) return "NO";
+
+//     int recurVariation = 0;
+//     bool recurredMoreThanOnce = false;
+//     // vector<int> recurrences;
+//     for (auto itr = recurrenceMap.begin(); itr != recurrenceMap.end(); ++itr) {
+//         // cout << "itr->second : " << itr->second << '\n';
+//         if (itr->second > 1) {
+//             if (recurredMoreThanOnce) {
+//                 return "NO";
+//             }
+//             recurredMoreThanOnce = true;
+//         }
+//         recurVariation++;
+//         if (recurVariation > 2) return "NO";
+//     }
+//     cout << "recurVariation: " << recurVariation << '\n';
+//     if (recurVariation > 2) return "NO";
+//     return "YES";
+// }
+
+string isValid(string s) {
+    vector<int> l(26, 0);
+    map<int, int> repTypes;
+    map<int, int> instances;
+    map<int, int> repMap;
+    for (int i = 0; i < s.size(); ++i) {
+        int c = s[i] - 97;
+        l[c]++;
+    }
+    for (int i = 0; i < 26; ++i) {
+        if (l[i] != 0) {
+            instances[l[i]]++;
+            // cout << "count: " << l[i] << '\n';
+        }
+    }
+    bool recurredMoreThanOnce = false;
+    vector<int> types;
+    for (auto itr = instances.begin(); itr != instances.end(); ++itr) {
+        // cout << "map key: " << itr->first << " value: " << itr->second << '\n';
+        if (itr->second > 1) {
+            if (recurredMoreThanOnce) {
+                return "NO";
+            }
+            recurredMoreThanOnce = true;
+        }
+        types.push_back(itr->first);
+        if (types.size() > 2) return "NO";
+    }
+    mgcp::PrintVector(types);
+    if (types.size() == 2) {
+        if (std::abs(types[0] - types[1]) > 1) {
+            if (!(instances[types[1]] == 1 && types[1] == 1 || instances[types[0]] == 1 && types[0] == 1)) {
+                return "NO";
+            }
+            // cout << "1st: " << instances[types[0]] << " 2nd: " << instances[types[1]] << '\n';
+        }
+    }
+    return "YES";
+}
+
+int main(int argc, char* argv[]) {
+    const std::string baseFilePath = "./inputs/";
+    FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
+    PRINT_INPUT_SIZE(input);
+
+    // const std::string customFilePath = "./_logs/hacker_rank/interview_prep_kit/sorting/mergesort/";
+    // const std::vector<std::string> cases({
+    //     customFilePath + "customin01.txt",  //
+    //     customFilePath + "customin02.txt",  //
+    //     customFilePath + "customin03.txt",  //
+    //     customFilePath + "customin04.txt",  //
+    //     customFilePath + "customin05.txt",  //
+    // });
+
+    // for (const std::string& s : cases) {
+    //     IntegerFileInput fileInput(getVectorizedFileInput(s));
+    //     PRINT_INPUT_SIZE(fileInput);
+    // }
+
+    cout << "test: " << isValid("abcdefghhgfedecba") << '\n';
+    cout << "test2: " << isValid("aaaabbcc") << '\n';
+    cout << "test3: " << isValid("aaaaabc") << '\n';
+
+    const std::string customFilePath = "./_logs/hacker_rank/interview_prep_kit/strings/sherlockandvalid/";
+    const std::vector<std::string> cases({
+        customFilePath + "input13.txt",  //
+    });
+    int count = 4;
+    for (const std::string& s : cases) {
+        std::string inputstring = mgcp::FileHelper::ReadFile(s);
+        cout << "test" << count++ << ": " << isValid(inputstring) << '\n';
+    }
+}
