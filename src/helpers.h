@@ -152,7 +152,8 @@ inline void PrintMapKeys(const std::map<std::string, T>& map, const std::string 
     std::cout << "PrintMap:: finished" << name << '\n';
 }
 
-inline void PrintVector(const std::vector<std::vector<int32_t>>& vec, const std::string optionalPrepend = "") {
+template <typename T>
+inline void PrintVector(const std::vector<std::vector<T>>& vec, const std::string optionalPrepend = "") {
     std::string s = optionalPrepend + "{\n";
     for (int32_t i = 0; i < vec.size(); ++i) {
         s.append("\t{ ");
@@ -167,7 +168,8 @@ inline void PrintVector(const std::vector<std::vector<int32_t>>& vec, const std:
     std::cout << s << "}" << '\n';
 }
 
-inline void PrintVector(const std::vector<int32_t>& vec, const std::string optionalPrepend = "") {
+template <typename T>
+inline void PrintVector(const std::vector<T>& vec, const std::string optionalPrepend = "") {
     std::string s = optionalPrepend + "{ ";
     for (int32_t i = 0; i < vec.size(); ++i) {
         s.append(std::to_string(vec[i]));
