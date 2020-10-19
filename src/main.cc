@@ -38,32 +38,45 @@ struct IntegerFileInput {
     std::vector<int> data;
 };
 
-long getSubWays(int n, vector<long>& c, int ptr, std::array<std::array<long, 251>, 251>& dp) {
-    if (n == 0) return 1;
-    long total = 0;
-    for (int i = ptr; i >= 0; --i) {
-        int N = n - c[i];
-        if (N >= 0) {
-            if (dp[N][i] == -1) {
-                dp[N][i] = getSubWays(N, c, i, dp);
+vector<int> isComplete(vector<int>& arr) {
+    // determine if the array has all but one matching value
+    map<int, int> values;
+    vector<int> uniqueValues;
+    for (int i = 0; i < arr.size(); ++i) {
+        const int c = arr[i];
+        if (values.find(c) == values.end()) {
+            if (uniqueValues.size() >= 2) {
+                // not valid
+                return {};
             }
-            total += dp[N][i];
+            values.insert({c, 1});
+            uniqueValues.push_back(c);
+        } else {
+            ++values[c];
+        }
+    }
+    if (uniqueValues.size() == 2 && (values[uniqueValues[0]] == 1 || values[uniqueValues[1]] == 1)) {
+        return uniqueValues;
+    }
+    return {};
+}
+
+// Complete the equal function below.
+int equal(vector<int> arr) {
+    std::sort(arr.begin(), arr.end(), [](int a, int b) { return a < b; });
+    int total = 0;
+    int target = arr[0];
+    for (int i = 1; i < arr.size(); ++i) {
+        const int c = arr[i];
+        if (c != target) {
+            int targetGoal = c - target;
+            int fives = targetGoal / 5;
+            int twos = (targetGoal % 5) / 2;
+            int remaining = (targetGoal % 5) % 2;
+            total += fives + twos + remaining;
         }
     }
     return total;
-}
-
-long getWays(int n, vector<long>& c) {
-    long total = 0;
-
-    std::array<std::array<long, 251>, 251> dp;
-    for (int i = 0; i < dp.size(); ++i) {
-        for (int j = 0; j < dp[i].size(); ++j) {
-            dp[i][j] = -1;
-        }
-    }
-    sort(c.begin(), c.end(), [](long a, long b) { return a < b; });
-    return getSubWays(n, c, c.size() - 1, dp);
 }
 
 int main(int argc, char* argv[]) {
@@ -71,36 +84,39 @@ int main(int argc, char* argv[]) {
     FileInput input = getVectorizedFileInput(baseFilePath + "test01.txt");
     PRINT_INPUT_SIZE(input);
 
-    const std::string customFilePath = "./inputs/hacker_rank/dynamic_programming/coin_change/";
+    const std::string customFilePath = "./inputs/hacker_rank/dynamic_programming/equal/";
+
+    const std::string answer15File = "answer15.txt";
+    std::string answer15String = mgcp::FileHelper::ReadFile(customFilePath + answer15File);
+    mgcp::StringReplace(answer15String, "\n", " ");
     const std::vector<std::vector<std::string>> cases({
-        {customFilePath + "sample01.txt", "4"},  //
-        {customFilePath + "sample02.txt", "5"},  //
+        {customFilePath + "sample01.txt", "10605 8198 18762 16931 5104"},  //
+        {customFilePath + "sample02.txt", "2"},                            //
         // {customFilePath + "sample03.txt", "3"},    //
         // {customFilePath + "input01.txt", "15"},    //
         // {customFilePath + "input02.txt", "27"},    //
         // {customFilePath + "input04.txt", "321"},   //
         // {customFilePath + "input05.txt", "1417"},  //
         // {customFilePath + "input10.txt", "1618"},  //
-        {customFilePath + "input13.txt", "370927"},   //
-        {customFilePath + "input16.txt", "5621927"},  //
+        {customFilePath + "input13.txt", "6"},             //
+        {customFilePath + "input15.txt", answer15String},  //
     });
 
     for (const std::vector<std::string>& vs : cases) {
         std::string inputstring = mgcp::FileHelper::ReadFile(vs[0]);
         std::vector<std::string> inputsplit = mgcp::SplitString(inputstring, '\n');
 
-        vector<string> fargs = mgcp::SplitString(inputsplit[0], ' ');
-        vector<string> fdata = mgcp::SplitString(inputsplit[1], ' ');
-        vector<int> args;
-        vector<long> data;
-        for (std::string& s : fargs) args.push_back(std::stoi(s));
-        for (std::string& s : fdata) data.push_back(std::stol(s));
+        // vector<string> fargs = mgcp::SplitString(inputsplit[0], ' ');
+        // vector<int> args;
+        // for (std::string& s : fargs) args.push_back(std::stoi(s));
 
-        // cout << "size of input: " << inputsplit[0].size() << '\n';
-        int answer = getWays(args[0], data);
-        cout << "answer: " << answer << " expected: " << vs[1] << '\n';
-
-        // IntegerFileInput fileInput(getVectorizedFileInput(s));
-        // PRINT_INPUT_SIZE(fileInput);
+        std::vector<std::string> expected = mgcp::SplitString(vs[1], ' ');
+        for (int i = 2, j = 0; i < inputsplit.size(); i += 2, ++j) {
+            vector<string> fdata = mgcp::SplitString(inputsplit[i], ' ');
+            vector<int> data;
+            for (std::string& s : fdata) data.push_back(std::stoi(s));
+            auto answer = equal(data);
+            cout << "answer: " << answer << " expected: " << expected[j] << '\n';
+        }
     }
 }

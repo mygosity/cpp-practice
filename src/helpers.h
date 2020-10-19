@@ -114,6 +114,32 @@ inline std::vector<std::string> SplitString(const std::string& target,
     return answer;
 }
 
+inline void StringReplace(std::string& context, const std::string& target, const std::string& replacement) {
+    const int32_t limit = context.size() - target.size() + 1;
+    for (int32_t i = 0; i < limit; ++i) {
+        if (context[i] == target[0]) {
+            int32_t startingIndex = i;
+            for (int32_t j = 1; j < target.size(); ++j) {
+                if (context[i + j] != target[j]) {
+                    startingIndex = -1;
+                    break;
+                }
+            }
+            if (startingIndex > -1) {
+                for (int32_t j = 0; j < replacement.size(); ++j) {
+                    if (i + j < context.size()) {
+                        context[i + j] = replacement[j];
+                    } else {
+                        // break and append the rest of the string
+                        context.append(replacement.substr(j));
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
 inline std::string GetStringBetweenIndices(const std::string& target, const size_t leftIndex, const size_t rightIndex) {
     return target.substr(leftIndex + 1, rightIndex - leftIndex - 1);
 }
