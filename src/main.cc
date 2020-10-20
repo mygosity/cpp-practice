@@ -64,19 +64,59 @@ vector<int> isComplete(vector<int>& arr) {
 // Complete the equal function below.
 int equal(vector<int> arr) {
     std::sort(arr.begin(), arr.end(), [](int a, int b) { return a < b; });
-    int total = 0;
-    int target = arr[0];
-    for (int i = 1; i < arr.size(); ++i) {
-        const int c = arr[i];
-        if (c != target) {
-            int targetGoal = c - target;
-            int fives = targetGoal / 5;
-            int twos = (targetGoal % 5) / 2;
-            int remaining = (targetGoal % 5) % 2;
-            total += fives + twos + remaining;
+    int total = INT32_MAX;
+
+    for (int j = 0; j < 3; ++j) {
+        int target = arr[0] - j;
+        int currentTotal = j == 0 ? 0 : 1;
+        for (int i = 1; i < arr.size(); ++i) {
+            const int c = arr[i];
+            if (c != target) {
+                int targetGoal = c - target;
+                int fives = targetGoal / 5;
+                int twos = (targetGoal % 5) / 2;
+                int remaining = (targetGoal % 5) % 2;
+                currentTotal += fives + twos + remaining;
+            }
         }
+        total = std::min(currentTotal, total);
     }
     return total;
+}
+
+int public_answer_equal(vector<int> a) {
+    const int n = a.size();
+
+    // giving x chocs to every colleague other than chosen one
+    // is the same as taking away x chocs from the chosen one
+    int min = *min_element(a.begin(), a.end());
+    int numops = 0;
+
+    // consider taking away 5 chocs first (nChocs)
+    for (int i = 0; i < n; i++) {
+        int nChocs = floor((a[i] - min) / 5.0);
+        a[i] -= (5 * floor((a[i] - min) / 5.0));
+        numops += nChocs;
+    }
+    min = *min_element(a.begin(), a.end());  // min of leftovers in a[]
+
+    // fine tuning for last calc, get freq of diff first
+    vector<int> freq(5);  // stores diff of 0 to 4
+    for (int i = 0; i < n; i++) freq[a[i] - min]++;
+
+    // case of min num of chocs is min
+    int extra_numops = 1 * (freq[1] + freq[2]) + 2 * (freq[3] + freq[4]);
+
+    // case of min num of chocs is min-1
+    int extra_numops1 = 1 * (freq[0] + freq[1] + freq[4]) + 2 * (freq[2] + freq[3]);
+    if (extra_numops1 < extra_numops) extra_numops = extra_numops1;
+
+    // case of min num of chocs is min-2
+    int extra_numops2 = 1 * (freq[0] + freq[3]) + 2 * (freq[1] + freq[2] + freq[4]);
+    if (extra_numops2 < extra_numops) extra_numops = extra_numops2;
+
+    // cout << numops + extra_numops << endl;
+    return numops + extra_numops;
 }
 
 int main(int argc, char* argv[]) {
@@ -98,6 +138,8 @@ int main(int argc, char* argv[]) {
         // {customFilePath + "input04.txt", "321"},   //
         // {customFilePath + "input05.txt", "1417"},  //
         // {customFilePath + "input10.txt", "1618"},  //
+        {customFilePath + "input11.txt", "3"},             //
+        {customFilePath + "input12.txt", "7"},             //
         {customFilePath + "input13.txt", "6"},             //
         {customFilePath + "input15.txt", answer15String},  //
     });

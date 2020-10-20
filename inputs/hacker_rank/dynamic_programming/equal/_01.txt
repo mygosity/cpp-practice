@@ -1,0 +1,20 @@
+1
+6
+2 5 5 5 5 5
+7 10 10 10 10 5
+12 15 15 15 10 10
+17 20 20 15 15 15
+22 25 20 20 20 20
+27 25 25 25 25 25
+27 27 27 27 27 27
+
+alternatively
+-2
+-5
+-5
+-5
+-5
+-5
+
+6 moves
+if the minimum can be shifted down to make the difference 5 then do it
